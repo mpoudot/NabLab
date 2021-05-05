@@ -48,7 +48,7 @@ Commons-Math3 (3.6.1)
 # Installing Eclipse for NabLab contributors
 
 - Download and install [Eclipse 2021-03](https://www.eclipse.org/downloads/packages/release/2021-03/r/eclipse-ide-java-and-dsl-developers)
-- Install Zest: Help>Install New Software..., Work with http://download.eclipse.org/releases/2021-03, select Modeling>Zest and install
+- Install Zest: Help>Install New Software..., Work with http://download.eclipse.org/releases/2021-03, select Modeling>Zest SDK and install
 - Install Sirius via the MarketPlace: Help>Eclipse Marketplace... and Find Sirius. Do not forget to select *Sirius Integration With Xtext*
 
 Then clone NabLab from GitHib and import existing projects located in plugins, tests, releng and docs directories.
