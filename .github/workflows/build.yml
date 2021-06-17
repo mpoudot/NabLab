@@ -23,22 +23,21 @@ jobs:
           
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    
-      - name: Setup Java SDK
-        uses: actions/setup-java@v1.4.3
-        with:
-          java-version: 11
-      
       - name: Cache Maven packages # see https://github.com/actions/cache for more details
         uses: actions/cache@v2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      
+
       - name: Checkout NabLab code
         uses: actions/checkout@v2
-      
+
+      # Set up environment to compile NabLab generated code
+      - name: Setup System environnement
+        run: chmod +x ${GITHUB_WORKSPACE}/.github/workflows/setupEnv.sh; ${GITHUB_WORKSPACE}/.github/workflows/setupEnv.sh
+        shell: bash
+
       # Executes fr.cea.nabla.ir/resources/import.sh
       - name: Run import.sh script
         working-directory: ./plugins/fr.cea.nabla.ir/resources
@@ -48,12 +47,12 @@ jobs:
       # Runs the maven build (build + tests)
       - name: Run maven build
         if: startsWith(github.ref, 'refs/tags/v') != true
-        run: mvn clean;mvn verify
+        run: export LEVELDB_HOME=$HOME/leveldb/install; export KOKKOS_HOME=$HOME/kokkos/install; mvn clean;mvn verify
       
       # Runs the maven build (build + tests + updatesite + products)
       - name: Run maven build and updatesite profiles
         if: startsWith(github.ref, 'refs/tags/v')
-        run: mvn clean -P build,updatesite;mvn verify -P build,updatesite
+        run: export LEVELDB_HOME=$HOME/leveldb/install; export KOKKOS_HOME=$HOME/kokkos/install; mvn clean -P build,updatesite;mvn verify -P build,updatesite
         
       # Create a Github Release
       - name: Release
@@ -63,5 +62,6 @@ jobs:
           files: |
             ./releng/fr.cea.nabla.updatesite/target/fr.cea.nabla.updatesite-*.zip
             ./releng/fr.cea.nabla.updatesite/target/products/*.zip
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
